@@ -1,14 +1,19 @@
 from argparse import Namespace, ArgumentParser
-from typing import List, Tuple
+from inspect import isclass
+
+import scripts.nca.model as _model
+import scripts.nca.trainer as _trainer
+import scripts.nca.perception as _perception
 
 def parse_args() -> Namespace:
     parser = ArgumentParser()
     # model specific arguments
     parser.add_argument('--name', '-n', help='name given to trained nca model')
-    parser.add_argument('--target', '-t', help='path to .vox model to use as the model\'s target structure')
+    parser.add_argument('--target', '-v', help='path to .vox model to use as the model\'s target structure')
     parser.add_argument('--seed', '-s', help='path to .vox model to use as the model\'s starting seed')
     parser.add_argument('--model', '-m', help=f'the type of nca model to train - model types: {list_model_types()}')
-    parser.add_argument('--perception', '-p', help=f'the perception type the model will use: {list_perception_types()}')
+    parser.add_argument('--perception', '-p', help=f'the perception type the model will use - perception types: {list_perception_types()}')
+    parser.add_argument('--trainer', '-t', help=f'the training regimen to use on the model - trainer types: {list_trainer_types()}')
     parser.add_argument('--channels', '-c', help='the number of channels per cell\'s state vector', default=16)
     parser.add_argument('--hidden', '-d', help='the number of hidden channels used in the neural update', default=128)
     # training specific arguments
@@ -50,9 +55,27 @@ def assert_args(args: Namespace) -> any:
         return False, missing_args
     return True, []
 
-
+# thanks to: https://stackoverflow.com/questions/5520580/how-do-you-get-all-classes-defined-in-a-module-but-not-imported
 def list_model_types() -> list[str]:
-    return ['']
+    md = _model.__dict__
+    return [
+        c for c in md if (
+            isinstance(md[c], type) and md[c].__module__ == _model.__name__
+        )
+    ]
 
 def list_perception_types() -> list[str]:
-    return ['']
+    md = _perception.__dict__
+    return [
+        c for c in md if (
+            isinstance(md[c], type) and md[c].__module__ == _perception.__name__
+        )
+    ]
+
+def list_trainer_types() -> list[str]:
+    md = _trainer.__dict__
+    return [
+        c for c in md if (
+            isinstance(md[c], type) and md[c].__module__ == _trainer.__name__
+        )
+    ]

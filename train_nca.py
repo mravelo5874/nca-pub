@@ -4,8 +4,8 @@ import torch
 import os
 
 from scripts.nca import utils
-from scripts.nca.model import nca_model
-from scripts.nca.trainer import nca_trainer
+from scripts.nca.model import _base_nca_model_
+from scripts.nca.trainer import _base_nca_trainer_
 
 PROGRAM = None
 MODEL_DIR = None
@@ -32,8 +32,8 @@ def main(args: Namespace) -> None:
     torch.set_default_dtype(torch.float)
 
     # * create model and trainer - begin training
-    model = nca_model(args)
-    trainer = nca_trainer(model)
+    model = _base_nca_model_(args)
+    trainer = _base_nca_trainer_(model)
     trainer.begin()
 
 def log(log_line: str) -> None:
