@@ -26,7 +26,7 @@ def orientation_channels(self, _module: ModuleType):
         return 3
     
 # performs a convolution per filter per channel
-def per_channel_conv3d(self, _x, _filters):
+def per_channel_conv3d(_x, _filters):
     batch_size, channels, height, width, depth = _x.shape
     # * reshape x to make per-channel convolution possible + pad 1 on each side
     y = _x.reshape(batch_size*channels, 1, height, width, depth).to('cuda')
@@ -47,10 +47,10 @@ class thesis_anisotropic_perception(_base_nca_perception_):
     def percieve(self, _x: torch.Tensor):
         _x = _x.to('cuda')
         # per channel convolutions
-        gx = self.per_channel_conv3d(_x, kernels.X_SOBEL[None, :])
-        gy = self.per_channel_conv3d(_x, kernels.Y_SOBEL[None, :])
-        gz = self.per_channel_conv3d(_x, kernels.Z_SOBEL_DOWN[None, :])
-        lap = self.per_channel_conv3d(_x, kernels.LAP_KERN_27[None, :])
+        gx = per_channel_conv3d(_x, kernels.X_SOBEL[None, :])
+        gy = per_channel_conv3d(_x, kernels.Y_SOBEL[None, :])
+        gz = per_channel_conv3d(_x, kernels.Z_SOBEL_DOWN[None, :])
+        lap = per_channel_conv3d(_x, kernels.LAP_KERN_27[None, :])
         return torch.cat([_x, gx, gy, gz, lap], 1)
 
 class thesis_1axis_isotropic_perception(_base_nca_perception_):
@@ -65,12 +65,12 @@ class thesis_1axis_isotropic_perception(_base_nca_perception_):
         states, angle = _x[:, :-1], _x[:, -1:]
         
         # * calculate gx and gy
-        gx = self.per_channel_conv3d(states, kernels.X_SOBEL_2D_XY[None, :])
-        gy = self.per_channel_conv3d(states, kernels.Y_SOBEL_2D_XY[None, :])
+        gx = per_channel_conv3d(states, kernels.X_SOBEL_2D_XY[None, :])
+        gy = per_channel_conv3d(states, kernels.Y_SOBEL_2D_XY[None, :])
         
         # calculate lap2d and lap3d
-        lap2d = self.per_channel_conv3d(states, kernels.LAP_2D_XY[None, :])
-        lap3d = self.per_channel_conv3d(states, kernels.LAP_KERN_7[None, :])
+        lap2d = per_channel_conv3d(states, kernels.LAP_2D_XY[None, :])
+        lap3d = per_channel_conv3d(states, kernels.LAP_KERN_7[None, :])
            
         # compute px and py 
         _cos, _sin = angle.cos(), angle.sin()
@@ -90,10 +90,10 @@ class thesis_isotropic_perception(_base_nca_perception_):
         states, ax, ay, az = _x[:, :-3], _x[:, -1:], _x[:, -2:-1], _x[:, -3:-2]
 
         # * per channel convolutions
-        px = self.per_channel_conv3d(states, kernels.X_SOBEL[None, :])
-        py = self.per_channel_conv3d(states, kernels.Y_SOBEL[None, :])
-        pz = self.per_channel_conv3d(states, kernels.Z_SOBEL_DOWN[None, :])
-        lap = self.per_channel_conv3d(states, kernels.LAP_KERN_27[None, :])
+        px = per_channel_conv3d(states, kernels.X_SOBEL[None, :])
+        py = per_channel_conv3d(states, kernels.Y_SOBEL[None, :])
+        pz = per_channel_conv3d(states, kernels.Z_SOBEL_DOWN[None, :])
+        lap = per_channel_conv3d(states, kernels.LAP_KERN_27[None, :])
         
         # * get perception tensors
         px = px[..., None]

@@ -43,8 +43,8 @@ class thesis_nca_trainer(_base_nca_trainer_):
         )
         lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer=optimizer,
-            factor=self.args.factor_sch,
-            patience=self.args.patience_sch,
+            factor=self.args.factor_sched,
+            patience=self.args.patience_sched,
             min_lr=self.args.end_lr,
         )
 
@@ -54,11 +54,14 @@ class thesis_nca_trainer(_base_nca_trainer_):
         import torch.nn.functional as func
         pad = utils.DEFAULT_PAD
         target_ten = func.pad(target_ten, (pad, pad, pad, pad, pad, pad), 'constant')
-        size = target_ten.shape[-1]
+        target_size = target_ten.shape[-1]
 
         # resize seed_ten s.t. it is the same size as target_tensor
-        seed_pad = (size-seed_ten.shape[-1])//2
-        seed_ten = func.pad(target_ten, (seed_pad, seed_pad, seed_pad, seed_pad, seed_pad, seed_pad), 'constant')
+        seed_size = seed_ten.shape[-1]
+        seed_pad = (target_size-seed_size)//2
+        extra_pad = 0
+        if seed_size+(seed_pad*2) < target_size: extra_pad = 1
+        seed_ten = func.pad(seed_ten, (seed_pad+extra_pad, seed_pad, seed_pad+extra_pad, seed_pad, seed_pad+extra_pad, seed_pad), 'constant')
         target_ten_bs = target_ten.clone().repeat(self.args.batch_size, 1, 1, 1, 1)
         utils.log(f'{PROGRAM} seed.shape: {seed_ten.shape}')
         utils.log(f'{PROGRAM} target.shape: {target_ten.shape}')

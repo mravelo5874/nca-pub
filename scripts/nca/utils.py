@@ -11,7 +11,7 @@ import os
 init()
 PROGRAM = f'{Style.DIM}[{os.path.basename(__file__)}]{Style.RESET_ALL}'
 LOG_FILE_PATH = None
-DEFAULT_PAD = 4
+DEFAULT_PAD = 2
 
 def set_log_file_path(_path: str) -> None:
     global LOG_FILE_PATH
@@ -25,7 +25,7 @@ def log(log_line: str, _print: bool = True) -> None:
     with open(LOG_FILE_PATH, 'a') as file:
         file.write(f'{log_line}\n')
 
-def parse_args() -> Namespace:
+def parse_train_nca_args() -> Namespace:
     parser = ArgumentParser()
     # model specific arguments
     parser.add_argument('--name', '-n', help=f'{Fore.WHITE}the name given to trained nca model{Style.RESET_ALL}')
@@ -51,7 +51,7 @@ def parse_args() -> Namespace:
     parser.add_argument('--info_rate', '-i', help=f'{Fore.WHITE}the rate at which to print out training information{Style.RESET_ALL}', default=100)
     return parser.parse_args()
 
-def assert_args(args: Namespace) -> any:
+def assert_train_nca_args(args: Namespace) -> any:
     missing_args = []
     if args.name is None: missing_args.append('--name')
     if args.target is None: missing_args.append('--target')

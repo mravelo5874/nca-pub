@@ -1,0 +1,28 @@
+[2m[train_nca.py][0m created model directory at: [37mmodels/testing-2024-12-16@22-44-46[0m
+[2m[train_nca.py][0m using torch version: [37m2.5.1+cu124[0m
+[2m[train_nca.py][0m using arguments: 
+[37m - name: [36mtesting[0m
+[37m - target: [36mvox_models\targets\oak.vox[0m
+[37m - seed: [36mvox_models\seeds\rgb_3x3x3.vox[0m
+[37m - perception: [36mthesis_anisotropic_perception[0m
+[37m - model: [36mthesis_nca_model[0m
+[37m - trainer: [36mthesis_nca_trainer[0m
+[37m - channels: [36m16[0m
+[37m - hidden: [36m128[0m
+[37m - epochs: [36m10000[0m
+[37m - pool_size: [36m64[0m
+[37m - batch_size: [36m4[0m
+[37m - start_lr: [36m0.001[0m
+[37m - end_lr: [36m1e-05[0m
+[37m - factor_sched: [36m0.5[0m
+[37m - patience_sched: [36m500[0m
+[37m - damage_num: [36m2[0m
+[37m - damage_rate: [36m5[0m
+[37m - log_file: [36mtrainlog.txt[0m
+[37m - info_rate: [36m100[0m
+[37m - model_dir: [36mtesting-2024-12-16@22-44-46[0m
+
+[2m[trainer.py][0m init seed.shape: torch.Size([1, 4, 3, 3, 3])
+[2m[trainer.py][0m init target.shape: torch.Size([1, 4, 28, 28, 28])
+[2m[trainer.py][0m seed.shape: torch.Size([1, 4, 28, 28, 28])
+[2m[trainer.py][0m target.shape: torch.Size([1, 4, 28, 28, 28])

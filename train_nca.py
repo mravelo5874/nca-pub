@@ -48,10 +48,12 @@ def main(args: Namespace) -> None:
 
 if __name__ == '__main__':
     TIMESTAMP = datetime.datetime.now().strftime('%Y-%m-%d@%H-%M-%S')
-    args = utils.parse_args()
-    is_valid, missing = utils.assert_args(args)
+    args = utils.parse_train_nca_args()
+    is_valid, missing = utils.assert_train_nca_args(args)
     if not is_valid:
         print (f'{PROGRAM} {Fore.RED}error!{Style.RESET_ALL} missing required argument(s): {Fore.YELLOW}{utils.pretty_print_str_list(missing)}{Style.RESET_ALL}')
         print (f'{PROGRAM} run script with {Fore.WHITE}--help{Style.RESET_ALL} flag for more information')
     else:
         main(args)
+
+# python train_nca.py --name testing --target vox_models\targets\burger.vox --seed vox_models\seeds\rgb_3x3x3.vox --model thesis_nca_model --trainer thesis_nca_trainer --perception thesis_anisotropic_perception

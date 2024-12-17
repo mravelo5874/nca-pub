@@ -11,6 +11,7 @@ class _base_nca_model_(torch.nn.Module):
         _args: Namespace,
         _perception: _base_nca_perception_
     ):
+        super(_base_nca_model_, self).__init__()
         self.args = _args
         self.perception = _perception
 
@@ -29,6 +30,18 @@ class thesis_nca_model(_base_nca_model_):
         _perception: _base_nca_perception_
     ):
         super(thesis_nca_model, self).__init__(_args, _perception)
+
+        # * calculate hidden channel values
+        perception_channels = self.perception.percieve(self.perception, torch.zeros([1, self.args.channels, 8, 8, 8]).to('cuda')).shape[1]
+        hidden_channels = 8*1024 // (perception_channels+self.args.channels)
+        hidden_channels = (self.args.hidden+31) // 32*32
+        
+        # * model layers
+        self.conv1 = torch.nn.Conv3d(perception_channels, hidden_channels, 1).to('cuda')
+        self.relu = torch.nn.ReLU(inplace=True).to('cuda')
+        self.conv2 = torch.nn.Conv3d(hidden_channels, self.args.channels, 1, bias=False).to('cuda')
+        with torch.no_grad():
+            self.conv2.weight.data.zero_()
 
     def get_alive_mask(self, _x):
         return func.max_pool3d(_x[:, 3:4, :, :, :], kernel_size=3, stride=1, padding=1) > 0.1
@@ -55,7 +68,7 @@ class thesis_nca_model(_base_nca_model_):
         alive_mask = self.get_alive_mask(x)
     
         # * perception step
-        p = self.perception.percieve(x)
+        p = self.perception.percieve(self.perception, x)
         
         # * update step
         p = self.conv1(p)
