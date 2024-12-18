@@ -17,7 +17,7 @@ class _base_nca_perception_():
         raise NotImplementedError
         # this method must be implemented by sub-classes!
 
-def orientation_channels(self, _module: ModuleType):
+def orientation_channels(_module: ModuleType):
     if _module == thesis_anisotropic_perception:
         return 0
     if _module == thesis_1axis_isotropic_perception:

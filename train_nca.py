@@ -3,6 +3,7 @@ from argparse import Namespace
 from scripts.nca import utils
 import datetime
 import torch
+import sys
 import os
 
 init()
@@ -20,10 +21,11 @@ def main(args: Namespace) -> None:
     # create model directory
     if not os.path.exists(f'models/{args.model_dir}'):
         os.mkdir(f'models/{args.model_dir}')
-    
+
     # setup log file and print
     utils.set_log_file_path(f'models/{args.model_dir}/{args.log_file}')
-    utils.log( f'{PROGRAM} created model directory at: {Fore.WHITE}models/{args.model_dir}{Style.RESET_ALL}')
+    utils.log('python ' + ' '.join(sys.argv) + '\n', False)
+    utils.log(f'{PROGRAM} created model directory at: {Fore.WHITE}models/{args.model_dir}{Style.RESET_ALL}')
     utils.log(f'{PROGRAM} using torch version: {Fore.WHITE}{torch.__version__}{Style.RESET_ALL}')
     utils.log(f'{PROGRAM} using arguments: {utils.pretty_print_args(args)}')
 
@@ -32,7 +34,7 @@ def main(args: Namespace) -> None:
         print (f'{PROGRAM} {Fore.RED}error!{Style.RESET_ALL} cuda is required for training - please use a machine with cuda capabilities')
         return
     torch.cuda.empty_cache()
-    torch.set_default_device('cuda')
+    torch.set_default_device('cpu')
     torch.set_default_dtype(torch.float)
 
     # create perception, model, and trainer - assert none are None

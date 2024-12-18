@@ -1,0 +1,43 @@
+train_nca.py --name testing --target vox_models\targets\burger.vox --seed vox_models\seeds\rgb_3x3x3.vox --model thesis_nca_model --trainer thesis_nca_trainer --perception thesis_anisotropic_perception --info_rate 10
+
+[2m[train_nca.py][0m created model directory at: [37mmodels/testing-2024-12-17@23-06-53[0m
+[2m[train_nca.py][0m using torch version: [37m2.5.1+cu124[0m
+[2m[train_nca.py][0m using arguments: 
+[37m - name: [36mtesting[0m
+[37m - target: [36mvox_models\targets\burger.vox[0m
+[37m - seed: [36mvox_models\seeds\rgb_3x3x3.vox[0m
+[37m - perception: [36mthesis_anisotropic_perception[0m
+[37m - model: [36mthesis_nca_model[0m
+[37m - trainer: [36mthesis_nca_trainer[0m
+[37m - channels: [36m16[0m
+[37m - hidden: [36m128[0m
+[37m - stochastic_rate: [36m0.5[0m
+[37m - epochs: [36m10000[0m
+[37m - pool_size: [36m64[0m
+[37m - batch_size: [36m4[0m
+[37m - start_lr: [36m0.001[0m
+[37m - end_lr: [36m1e-05[0m
+[37m - factor_sched: [36m0.5[0m
+[37m - patience_sched: [36m500[0m
+[37m - damage_num: [36m2[0m
+[37m - damage_rate: [36m5[0m
+[37m - log_file: [36mtrainlog.txt[0m
+[37m - info_rate: [36m10[0m
+[37m - model_dir: [36mtesting-2024-12-17@23-06-53[0m
+[2m[trainer.py][0m seed.shape: [37m[1, 16, 20, 20, 20][0m
+[2m[trainer.py][0m target.shape: [37m[1, 16, 20, 20, 20][0m
+[2m[trainer.py][0m pool.shape:[37m[64, 16, 20, 20, 20][0m
+[2m[trainer.py][0m starting training w/ [32m10000[0m epochs...
+[2m[trainer.py][0m [[36m10[0m/10000]	 [36m1.667[0mit/s	 time: [36m0:00:06[0m~1:39:54	 loss: [36m4161.859[0m>62.292	 lr: 0.001
+[2m[trainer.py][0m detected minimum average loss during training: [32m4161.859[0m -- saving model to: [37mmodels/testing-2024-12-17@23-06-53/best@10.pt[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m4109.77[0m -- saving model to: [37mmodels/testing-2024-12-17@23-06-53/best@11.pt[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m864.859[0m -- saving model to: [37mmodels/testing-2024-12-17@23-06-53/best@12.pt[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m74.381[0m -- saving model to: [37mmodels/testing-2024-12-17@23-06-53/best@18.pt[0m
+[2m[trainer.py][0m [[36m20[0m/10000]	 [36m1.538[0mit/s	 time: [36m0:00:13[0m~1:48:06	 loss: [36m347.188[0m>62.292	 lr: 0.001
+[2m[trainer.py][0m [[36m30[0m/10000]	 [36m1.667[0mit/s	 time: [36m0:00:18[0m~1:39:42	 loss: [36m151.108[0m>62.292	 lr: 0.001
+[2m[trainer.py][0m [[36m40[0m/10000]	 [36m1.6[0mit/s	 time: [36m0:00:25[0m~1:43:45	 loss: [36m62.649[0m>62.292	 lr: 0.001
+[2m[trainer.py][0m detected minimum average loss during training: [32m62.649[0m -- saving model to: [37mmodels/testing-2024-12-17@23-06-53/best@40.pt[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m62.631[0m -- saving model to: [37mmodels/testing-2024-12-17@23-06-53/best@44.pt[0m
+[2m[trainer.py][0m [[36m50[0m/10000]	 [36m1.613[0mit/s	 time: [36m0:00:31[0m~1:42:49	 loss: [36m62.652[0m>62.292	 lr: 0.001
+[2m[trainer.py][0m detected minimum average loss during training: [32m62.606[0m -- saving model to: [37mmodels/testing-2024-12-17@23-06-53/best@51.pt[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m62.599[0m -- saving model to: [37mmodels/testing-2024-12-17@23-06-53/best@52.pt[0m

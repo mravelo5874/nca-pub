@@ -228,9 +228,9 @@ class vox(object):
 
         # * convert figure to numpy array RGB
         fig.canvas.draw()
-        data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-        data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-        return data
+        # data = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
+        # data = data.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+        # return data
         
     # def orbit(self, _filename=None, _turn=360, _delta=10, _zoom=1, _show_grid=False, _print=True):
     #     if _filename == None:

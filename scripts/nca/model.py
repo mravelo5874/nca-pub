@@ -48,21 +48,21 @@ class thesis_nca_model(_base_nca_model_):
 
     def save(self, _model_name):
         # save model weights
-        import pathlib
-        model_path = pathlib.Path(f'{self.args.model_dir}/{self.args.name}/{_model_name}.pt')
-        model_path.mkdir(parents=True, exist_ok=True)
-        torch.save(self.module.state_dict(), model_path)
+        model_path = f'models/{self.args.model_dir}/{_model_name}.pt'
+        torch.save(self.state_dict(), model_path)
 
         # save model arguments
         import json
-        json_object = json.dumps(self.args.__dict__, indent=4)
-        args_json_path = pathlib.Path(f'{self.args.model_dir}/{self.args.name}/{_model_name}_args.json')
-        with open(args_json_path, 'w') as outfile:
-            outfile.write(json_object)
+        import os
+        args_json_path = f'models/{self.args.model_dir}/{self.args.name}_args.json'
+        if not os.path.exists(args_json_path):
+            json_object = json.dumps(self.args.__dict__, indent=4)
+            with open(args_json_path, 'w') as outfile:
+                outfile.write(json_object)
 
     def forward(self, _x: torch.Tensor):
         # * send to device
-        x = _x
+        x = _x.to('cuda')
         
         # * get alive mask
         alive_mask = self.get_alive_mask(x)
@@ -76,7 +76,7 @@ class thesis_nca_model(_base_nca_model_):
         p = self.conv2(p)
         
         # * create stochastic mask
-        stochastic_mask = (torch.rand(_x[:, :1, :, :, :].shape) <= self.rate)
+        stochastic_mask = (torch.rand(_x[:, :1, :, :, :].shape) <= self.args.stochastic_rate).to('cuda')
         
         # * perform stochastic update
         x = x + p * stochastic_mask

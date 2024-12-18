@@ -1,0 +1,23 @@
+{
+    "name": "testing",
+    "target": "vox_models\\targets\\burger.vox",
+    "seed": "vox_models\\seeds\\rgb_3x3x3.vox",
+    "perception": "thesis_anisotropic_perception",
+    "model": "thesis_nca_model",
+    "trainer": "thesis_nca_trainer",
+    "channels": 16,
+    "hidden": 128,
+    "stochastic_rate": 0.5,
+    "epochs": 10000,
+    "pool_size": 64,
+    "batch_size": 4,
+    "start_lr": 0.001,
+    "end_lr": 1e-05,
+    "factor_sched": 0.5,
+    "patience_sched": 500,
+    "damage_num": 2,
+    "damage_rate": 5,
+    "log_file": "trainlog.txt",
+    "info_rate": 10,
+    "model_dir": "testing-2024-12-17@23-06-53"
+}

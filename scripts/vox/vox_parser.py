@@ -107,6 +107,8 @@ class vox_parser(object):
             
     def parse(self):
         _, version = self.unpack('4si')
+
+        # print (f'vox version: {version}')
         
         if version != 200 and version != 150: raise ParsingException("Unknown vox version: %s expected 150"%version)
         
@@ -121,10 +123,13 @@ class vox_parser(object):
 
         models = [self._parseModel(chunks.pop(), chunks.pop()) for _ in range(models)]
 
-        if chunks and chunks[0].id == b'RGBA':
-            palette = chunks.pop().palette
-        else:
-            palette = None
+        # if chunks and chunks[0].id == b'RGBA':
+        #     palette = chunks.pop().palette
+        # else:
+        
+        palette = None
+
+        # print (f'vox palette: {palette}')
 
         materials = [ c.material for c in chunks ]
 

@@ -28,27 +28,28 @@ def log(log_line: str, _print: bool = True) -> None:
 def parse_train_nca_args() -> Namespace:
     parser = ArgumentParser()
     # model specific arguments
-    parser.add_argument('--name', '-n', help=f'{Fore.WHITE}the name given to trained nca model{Style.RESET_ALL}')
-    parser.add_argument('--target', '-v', help=f'{Fore.WHITE}path to .vox model to use as the model\'s target structure{Style.RESET_ALL}')
-    parser.add_argument('--seed', '-s', help=f'{Fore.WHITE}path to .vox model to use as the model\'s starting seed{Style.RESET_ALL}')
-    parser.add_argument('--perception', '-p', help=f'{Fore.WHITE}the perception type the model will use - perception types: {Fore.YELLOW}{pretty_print_str_list(get_module_valid_classes(_perception))}{Style.RESET_ALL}')
-    parser.add_argument('--model', '-m', help=f'{Fore.WHITE}the type of nca model to train - model types: {Fore.YELLOW}{pretty_print_str_list(get_module_valid_classes(_model))}{Style.RESET_ALL}')
-    parser.add_argument('--trainer', '-t', help=f'{Fore.WHITE}the training regimen to use on the model - trainer types: {Fore.YELLOW}{pretty_print_str_list(get_module_valid_classes(_trainer))}{Style.RESET_ALL}')
-    parser.add_argument('--channels', '-c', help=f'{Fore.WHITE}the number of channels per cell\'s state vector{Style.RESET_ALL}', default=16)
-    parser.add_argument('--hidden', '-d', help=f'{Fore.WHITE}the number of hidden channels used in the neural update{Style.RESET_ALL}', default=128)
+    parser.add_argument('--name', '-n', help=f'{Fore.WHITE}the name given to trained nca model{Style.RESET_ALL}', type=str)
+    parser.add_argument('--target', '-v', help=f'{Fore.WHITE}path to .vox model to use as the model\'s target structure{Style.RESET_ALL}', type=str)
+    parser.add_argument('--seed', '-s', help=f'{Fore.WHITE}path to .vox model to use as the model\'s starting seed{Style.RESET_ALL}', type=str)
+    parser.add_argument('--perception', '-p', help=f'{Fore.WHITE}the perception type the model will use - perception types: {Fore.YELLOW}{pretty_print_str_list(get_module_valid_classes(_perception))}{Style.RESET_ALL}', type=str)
+    parser.add_argument('--model', '-m', help=f'{Fore.WHITE}the type of nca model to train - model types: {Fore.YELLOW}{pretty_print_str_list(get_module_valid_classes(_model))}{Style.RESET_ALL}', type=str)
+    parser.add_argument('--trainer', '-t', help=f'{Fore.WHITE}the training regimen to use on the model - trainer types: {Fore.YELLOW}{pretty_print_str_list(get_module_valid_classes(_trainer))}{Style.RESET_ALL}', type=str)
+    parser.add_argument('--channels', '-c', help=f'{Fore.WHITE}the number of channels per cell\'s state vector (including rgba){Style.RESET_ALL}', default=16, type=int)
+    parser.add_argument('--hidden', '-d', help=f'{Fore.WHITE}the number of hidden channels used in the neural update{Style.RESET_ALL}', default=128, type=int)
+    parser.add_argument('--stochastic_rate', '-sr', help=f'{Fore.WHITE}the chance each cell has to be updated each update step{Style.RESET_ALL}', default=0.5, type=float)
     # training specific arguments
-    parser.add_argument('--epochs', '-e', help=f'{Fore.WHITE}the number of epochs to train for{Style.RESET_ALL}', default=10_000)
-    parser.add_argument('--pool_size', '-o', help=f'{Fore.WHITE}the size of the training pool{Style.RESET_ALL}', default=64)
-    parser.add_argument('--batch_size', '-b', help=f'{Fore.WHITE}the number of models to take from the pool each epoch{Style.RESET_ALL}', default=4)
-    parser.add_argument('--start_lr', '-slr', help=f'{Fore.WHITE}the starting learning rate{Style.RESET_ALL}', default=1e-3)
-    parser.add_argument('--end_lr', '-elr', help=f'{Fore.WHITE}the ending learning rate{Style.RESET_ALL}', default=1e-5)
-    parser.add_argument('--factor_sched', '-fs', help=f'{Fore.WHITE}the factor schedule used for lr-optimization{Style.RESET_ALL}', default=0.5)
-    parser.add_argument('--patience_sched', '-ps', help=f'{Fore.WHITE}the patience schedule used for lr-optimization{Style.RESET_ALL}', default=500)
-    parser.add_argument('--damage_num', '-dn', help=f'{Fore.WHITE}the number of (lowest loss) models in a batch to apply damage to{Style.RESET_ALL}', default=2)
-    parser.add_argument('--damage_rate', '-dr', help=f'{Fore.WHITE}the rate at which to apply damage (every x epochs){Style.RESET_ALL}', default=5)
+    parser.add_argument('--epochs', '-e', help=f'{Fore.WHITE}the number of epochs to train for{Style.RESET_ALL}', default=10_000, type=int)
+    parser.add_argument('--pool_size', '-o', help=f'{Fore.WHITE}the size of the training pool{Style.RESET_ALL}', default=64, type=int)
+    parser.add_argument('--batch_size', '-b', help=f'{Fore.WHITE}the number of models to take from the pool each epoch{Style.RESET_ALL}', default=4, type=int)
+    parser.add_argument('--start_lr', '-slr', help=f'{Fore.WHITE}the starting learning rate{Style.RESET_ALL}', default=1e-3, type=float)
+    parser.add_argument('--end_lr', '-elr', help=f'{Fore.WHITE}the ending learning rate{Style.RESET_ALL}', default=1e-5, type=float)
+    parser.add_argument('--factor_sched', '-fs', help=f'{Fore.WHITE}the factor schedule used for lr-optimization{Style.RESET_ALL}', default=0.5, type=float)
+    parser.add_argument('--patience_sched', '-ps', help=f'{Fore.WHITE}the patience schedule used for lr-optimization{Style.RESET_ALL}', default=500, type=int)
+    parser.add_argument('--damage_num', '-dn', help=f'{Fore.WHITE}the number of (lowest loss) models in a batch to apply damage to{Style.RESET_ALL}', default=2, type=int)
+    parser.add_argument('--damage_rate', '-dr', help=f'{Fore.WHITE}the rate at which to apply damage (every x epochs){Style.RESET_ALL}', default=5, type=int)
     # logging specific arguments
-    parser.add_argument('--log_file', '-l', help=f'{Fore.WHITE}the log file (created within model directory) to write to during training{Style.RESET_ALL}', default='trainlog.txt')
-    parser.add_argument('--info_rate', '-i', help=f'{Fore.WHITE}the rate at which to print out training information{Style.RESET_ALL}', default=100)
+    parser.add_argument('--log_file', '-l', help=f'{Fore.WHITE}the log file (created within model directory) to write to during training{Style.RESET_ALL}', default='trainlog.txt', type=str)
+    parser.add_argument('--info_rate', '-i', help=f'{Fore.WHITE}the rate at which to print out training information{Style.RESET_ALL}', default=100, type=int)
     return parser.parse_args()
 
 def assert_train_nca_args(args: Namespace) -> any:
@@ -61,6 +62,7 @@ def assert_train_nca_args(args: Namespace) -> any:
     if args.trainer is None: missing_args.append('--trainer')
     if args.channels is None: missing_args.append('--channels')
     if args.hidden is None: missing_args.append('--hidden')
+    if args.stochastic_rate is None: missing_args.append('--stochastic_rate')
     if args.epochs is None: missing_args.append('--epochs')
     if args.pool_size is None: missing_args.append('--pool_size')
     if args.batch_size is None: missing_args.append('--batch_size')
@@ -83,7 +85,11 @@ def pretty_print_str_list(_list: list[str]) -> str:
 def pretty_print_args(_args: Namespace) -> str:
     args_str = '\n'
     for a in _args.__dict__: args_str += f'{Fore.WHITE} - {a}: {Fore.CYAN}{_args.__dict__[a]}{Style.RESET_ALL}\n'
-    return args_str
+    return args_str[:-1]
+
+def render_tensor_as_vox(_tensor: torch.Tensor):
+    from scripts.vox.vox import vox
+    vox().load_from_tensor(_tensor).render()
 
 def load_vox_as_tensor(_vox_model_path: str):
     from scripts.vox.vox import vox
@@ -94,6 +100,22 @@ def load_vox_as_tensor(_vox_model_path: str):
         with open(_vox_model_path, 'rb') as f:
             target_ten = torch.from_numpy(np.load(f))
     return target_ten
+
+def generate_pool(_args: Namespace, _seed: torch.Tensor, _isotype: int):
+    pool_size = _args.pool_size
+    size = _seed.shape[-1]
+    with torch.no_grad():
+        pool = _seed.clone().repeat(pool_size, 1, 1, 1, 1)
+        # * randomize channel(s)
+        if _isotype == 1:
+            for j in range(pool_size):
+                pool[j, -1:] = torch.rand(size, size, size)*np.pi*2.0
+        elif _isotype == 3:
+            for j in range(pool_size):
+                pool[j, -1:] = torch.rand(size, size, size)*np.pi*2.0
+                pool[j, -2:-1] = torch.rand(size, size, size)*np.pi*2.0
+                pool[j, -3:-2] = torch.rand(size, size, size)*np.pi*2.0
+    return pool
 
 def half_volume_mask(_size, _type):
     mask_types = ['x+', 'x-', 'y+', 'y-', 'z+', 'z-', 'rand']
