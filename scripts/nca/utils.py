@@ -41,10 +41,9 @@ def parse_train_nca_args() -> Namespace:
     parser.add_argument('--epochs', '-e', help=f'{Fore.WHITE}the number of epochs to train for{Style.RESET_ALL}', default=10_000, type=int)
     parser.add_argument('--pool_size', '-o', help=f'{Fore.WHITE}the size of the training pool{Style.RESET_ALL}', default=64, type=int)
     parser.add_argument('--batch_size', '-b', help=f'{Fore.WHITE}the number of models to take from the pool each epoch{Style.RESET_ALL}', default=4, type=int)
-    parser.add_argument('--start_lr', '-slr', help=f'{Fore.WHITE}the starting learning rate{Style.RESET_ALL}', default=1e-3, type=float)
-    parser.add_argument('--end_lr', '-elr', help=f'{Fore.WHITE}the ending learning rate{Style.RESET_ALL}', default=1e-5, type=float)
-    parser.add_argument('--factor_sched', '-fs', help=f'{Fore.WHITE}the factor schedule used for lr-optimization{Style.RESET_ALL}', default=0.5, type=float)
-    parser.add_argument('--patience_sched', '-ps', help=f'{Fore.WHITE}the patience schedule used for lr-optimization{Style.RESET_ALL}', default=500, type=int)
+    parser.add_argument('--base_lr', '-blr', help=f'{Fore.WHITE}the lowest possible learning rate for the lr-scheduler{Style.RESET_ALL}', default=1e-5, type=float)
+    parser.add_argument('--max_lr', '-mlr', help=f'{Fore.WHITE}the starting learning rate for the lr-scheduler{Style.RESET_ALL}', default=1e-3, type=float)
+    parser.add_argument('--lr_step_size', '-ss', help=f'{Fore.WHITE}the step size for the lr-scheduler{Style.RESET_ALL}', default=2000, type=float)
     parser.add_argument('--damage_num', '-dn', help=f'{Fore.WHITE}the number of (lowest loss) models in a batch to apply damage to{Style.RESET_ALL}', default=2, type=int)
     parser.add_argument('--damage_rate', '-dr', help=f'{Fore.WHITE}the rate at which to apply damage (every x epochs){Style.RESET_ALL}', default=5, type=int)
     # logging specific arguments
@@ -66,16 +65,23 @@ def assert_train_nca_args(args: Namespace) -> any:
     if args.epochs is None: missing_args.append('--epochs')
     if args.pool_size is None: missing_args.append('--pool_size')
     if args.batch_size is None: missing_args.append('--batch_size')
-    if args.start_lr is None: missing_args.append('--start_lr')
-    if args.end_lr is None: missing_args.append('--end_lr')
-    if args.factor_sched is None: missing_args.append('--factor_sched')
-    if args.patience_sched is None: missing_args.append('--patience_sched')
+    if args.base_lr is None: missing_args.append('--base_lr')
+    if args.max_lr is None: missing_args.append('--max_lr')
+    if args.lr_step_size is None: missing_args.append('--lr_step_size')
     if args.damage_num is None: missing_args.append('--damage_num')
     if args.damage_rate is None: missing_args.append('--damage_rate')
     if args.log_file is None: missing_args.append('--log_file')
     if args.info_rate is None: missing_args.append('--info_rate')
     if len(missing_args) > 0: return False, missing_args
     return True, []
+
+def parse_visualizer_args() -> Namespace:
+    parser = ArgumentParser()
+    # model specific arguments
+    parser.add_argument('--port', '-p', help=f'{Fore.WHITE}the port to run the local server{Style.RESET_ALL}', default=8080, type=int)
+    parser.add_argument('--models_dir', '-m', help=f'{Fore.WHITE}the directory containing trained nca models{Style.RESET_ALL}', default='/models/', type=str)
+    parser.add_argument('--vox_dir', '-v', help=f'{Fore.WHITE}the directory containing vox models{Style.RESET_ALL}', default='/vox/', type=str)
+    return parser.parse_args()
 
 def pretty_print_str_list(_list: list[str]) -> str:
     list_str = ''

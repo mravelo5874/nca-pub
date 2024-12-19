@@ -1,0 +1,73 @@
+python train_nca.py --name testing --target vox_models\targets\burger.vox --seed vox_models\seeds\rgb_3x3x3.vox --model thesis_nca_model --trainer thesis_nca_trainer --perception thesis_anisotropic_perception --info_rate 10
+
+[2m[train_nca.py][0m created model directory at: [37mmodels/testing-2024-12-19@00-01-26[0m
+[2m[train_nca.py][0m using torch version: [37m2.5.1+cu124[0m
+[2m[train_nca.py][0m using arguments: 
+[37m - name: [36mtesting[0m
+[37m - target: [36mvox_models\targets\burger.vox[0m
+[37m - seed: [36mvox_models\seeds\rgb_3x3x3.vox[0m
+[37m - perception: [36mthesis_anisotropic_perception[0m
+[37m - model: [36mthesis_nca_model[0m
+[37m - trainer: [36mthesis_nca_trainer[0m
+[37m - channels: [36m16[0m
+[37m - hidden: [36m128[0m
+[37m - stochastic_rate: [36m0.5[0m
+[37m - epochs: [36m10000[0m
+[37m - pool_size: [36m64[0m
+[37m - batch_size: [36m4[0m
+[37m - base_lr: [36m1e-05[0m
+[37m - max_lr: [36m0.001[0m
+[37m - lr_step_size: [36m2000[0m
+[37m - damage_num: [36m2[0m
+[37m - damage_rate: [36m5[0m
+[37m - log_file: [36mtrainlog.txt[0m
+[37m - info_rate: [36m10[0m
+[37m - model_dir: [36mtesting-2024-12-19@00-01-26[0m
+[2m[trainer.py][0m seed.shape: [37m[1, 16, 20, 20, 20][0m
+[2m[trainer.py][0m target.shape: [37m[1, 16, 20, 20, 20][0m
+[2m[trainer.py][0m pool.shape: [37m[64, 16, 20, 20, 20][0m
+[2m[trainer.py][0m starting training w/ [32m10000[0m epochs...
+[2m[trainer.py][0m [[36m10[0m/10000]	 [36m1.429[0mit/s	 time: [36m0:00:07[0m~1:56:33	 loss: [36m61.56[0m>59.964	 lr: [36m1.545e-05[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m61.56[0m -- saving model to: [37mmodels/testing-2024-12-19@00-01-26/best@10[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m61.16[0m -- saving model to: [37mmodels/testing-2024-12-19@00-01-26/best@11[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m60.998[0m -- saving model to: [37mmodels/testing-2024-12-19@00-01-26/best@12[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m60.25[0m -- saving model to: [37mmodels/testing-2024-12-19@00-01-26/best@13[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m59.79[0m -- saving model to: [37mmodels/testing-2024-12-19@00-01-26/best@14[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m59.401[0m -- saving model to: [37mmodels/testing-2024-12-19@00-01-26/best@15[0m
+[2m[trainer.py][0m [[36m20[0m/10000]	 [36m1.429[0mit/s	 time: [36m0:00:14[0m~1:56:26	 loss: [36m2183.895[0m>48.182	 lr: [36m2.039e-05[0m
+[2m[trainer.py][0m [[36m30[0m/10000]	 [36m1.5[0mit/s	 time: [36m0:00:20[0m~1:50:46	 loss: [36m11407.307[0m>43.696	 lr: [36m2.534e-05[0m
+[2m[trainer.py][0m [[36m40[0m/10000]	 [36m1.538[0mit/s	 time: [36m0:00:26[0m~1:47:53	 loss: [36m163679.77[0m>43.696	 lr: [36m3.03e-05[0m
+[2m[trainer.py][0m [[36m50[0m/10000]	 [36m1.515[0mit/s	 time: [36m0:00:33[0m~1:49:27	 loss: [36m1510.308[0m>40.313	 lr: [36m3.525e-05[0m
+[2m[trainer.py][0m [[36m60[0m/10000]	 [36m1.538[0mit/s	 time: [36m0:00:39[0m~1:47:40	 loss: [36m94.625[0m>40.313	 lr: [36m4.019e-05[0m
+[2m[trainer.py][0m [[36m70[0m/10000]	 [36m1.522[0mit/s	 time: [36m0:00:46[0m~1:48:45	 loss: [36m213.243[0m>39.334	 lr: [36m4.514e-05[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m51.998[0m -- saving model to: [37mmodels/testing-2024-12-19@00-01-26/best@78[0m
+[2m[trainer.py][0m [[36m80[0m/10000]	 [36m1.538[0mit/s	 time: [36m0:00:52[0m~1:47:27	 loss: [36m57.116[0m>39.334	 lr: [36m5.01e-05[0m
+[2m[trainer.py][0m [[36m90[0m/10000]	 [36m1.552[0mit/s	 time: [36m0:00:58[0m~1:46:26	 loss: [36m54.678[0m>39.334	 lr: [36m5.505e-05[0m
+[2m[trainer.py][0m [[36m100[0m/10000]	 [36m1.562[0mit/s	 time: [36m0:01:04[0m~1:45:36	 loss: [36m238.179[0m>39.334	 lr: [36m5.999e-05[0m
+[2m[trainer.py][0m [[36m110[0m/10000]	 [36m1.549[0mit/s	 time: [36m0:01:11[0m~1:46:23	 loss: [36m365.936[0m>39.334	 lr: [36m6.494e-05[0m
+[2m[trainer.py][0m [[36m120[0m/10000]	 [36m1.558[0mit/s	 time: [36m0:01:17[0m~1:45:39	 loss: [36m315.069[0m>37.291	 lr: [36m6.99e-05[0m
+[2m[trainer.py][0m [[36m130[0m/10000]	 [36m1.566[0mit/s	 time: [36m0:01:23[0m~1:45:01	 loss: [36m8476.468[0m>37.291	 lr: [36m7.485e-05[0m
+[2m[trainer.py][0m [[36m140[0m/10000]	 [36m1.556[0mit/s	 time: [36m0:01:30[0m~1:45:38	 loss: [36m749.442[0m>37.291	 lr: [36m7.98e-05[0m
+[2m[trainer.py][0m [[36m150[0m/10000]	 [36m1.562[0mit/s	 time: [36m0:01:36[0m~1:45:04	 loss: [36m60.547[0m>37.291	 lr: [36m8.474e-05[0m
+[2m[trainer.py][0m [[36m160[0m/10000]	 [36m1.553[0mit/s	 time: [36m0:01:43[0m~1:45:34	 loss: [36m72.171[0m>37.291	 lr: [36m8.969e-05[0m
+[2m[trainer.py][0m [[36m170[0m/10000]	 [36m1.56[0mit/s	 time: [36m0:01:49[0m~1:45:02	 loss: [36m1564.47[0m>37.291	 lr: [36m9.465e-05[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m49.166[0m -- saving model to: [37mmodels/testing-2024-12-19@00-01-26/best@172[0m
+[2m[trainer.py][0m detected minimum average loss during training: [32m48.346[0m -- saving model to: [37mmodels/testing-2024-12-19@00-01-26/best@173[0m
+[2m[trainer.py][0m [[36m180[0m/10000]	 [36m1.565[0mit/s	 time: [36m0:01:55[0m~1:44:33	 loss: [36m1447.695[0m>37.291	 lr: [36m9.96e-05[0m
+[2m[trainer.py][0m [[36m190[0m/10000]	 [36m1.557[0mit/s	 time: [36m0:02:02[0m~1:44:59	 loss: [36m2714.694[0m>37.291	 lr: [36m0.00010454[0m
+[2m[trainer.py][0m [[36m200[0m/10000]	 [36m1.562[0mit/s	 time: [36m0:02:08[0m~1:44:32	 loss: [36m192.033[0m>37.291	 lr: [36m0.00010949[0m
+[2m[trainer.py][0m [[36m210[0m/10000]	 [36m1.556[0mit/s	 time: [36m0:02:15[0m~1:44:53	 loss: [36m413.799[0m>37.291	 lr: [36m0.00011445[0m
+[2m[trainer.py][0m [[36m220[0m/10000]	 [36m1.56[0mit/s	 time: [36m0:02:21[0m~1:44:28	 loss: [36m4238.838[0m>36.971	 lr: [36m0.0001194[0m
+[2m[trainer.py][0m [[36m230[0m/10000]	 [36m1.554[0mit/s	 time: [36m0:02:28[0m~1:44:46	 loss: [36m60.472[0m>36.971	 lr: [36m0.00012434[0m
+[2m[trainer.py][0m [[36m240[0m/10000]	 [36m1.558[0mit/s	 time: [36m0:02:34[0m~1:44:22	 loss: [36m333.853[0m>36.971	 lr: [36m0.00012929[0m
+[2m[trainer.py][0m [[36m250[0m/10000]	 [36m1.562[0mit/s	 time: [36m0:02:40[0m~1:44:00	 loss: [36m220.383[0m>36.971	 lr: [36m0.00013425[0m
+[2m[trainer.py][0m [[36m260[0m/10000]	 [36m1.566[0mit/s	 time: [36m0:02:46[0m~1:43:38	 loss: [36m573.904[0m>36.971	 lr: [36m0.0001392[0m
+[2m[trainer.py][0m [[36m270[0m/10000]	 [36m1.57[0mit/s	 time: [36m0:02:52[0m~1:43:18	 loss: [36m309.681[0m>36.971	 lr: [36m0.00014414[0m
+[2m[trainer.py][0m [[36m280[0m/10000]	 [36m1.564[0mit/s	 time: [36m0:02:59[0m~1:43:33	 loss: [36m230.231[0m>36.971	 lr: [36m0.00014909[0m
+[2m[trainer.py][0m [[36m290[0m/10000]	 [36m1.568[0mit/s	 time: [36m0:03:05[0m~1:43:14	 loss: [36m410.77[0m>36.971	 lr: [36m0.00015405[0m
+[2m[trainer.py][0m [[36m300[0m/10000]	 [36m1.571[0mit/s	 time: [36m0:03:11[0m~1:42:55	 loss: [36m2098.352[0m>36.971	 lr: [36m0.000159[0m
+[2m[trainer.py][0m [[36m310[0m/10000]	 [36m1.566[0mit/s	 time: [36m0:03:18[0m~1:43:09	 loss: [36m482.747[0m>36.971	 lr: [36m0.00016394[0m
+[2m[trainer.py][0m [[36m320[0m/10000]	 [36m1.569[0mit/s	 time: [36m0:03:24[0m~1:42:51	 loss: [36m219.528[0m>36.971	 lr: [36m0.00016889[0m
+[2m[trainer.py][0m [[36m330[0m/10000]	 [36m1.571[0mit/s	 time: [36m0:03:30[0m~1:42:33	 loss: [36m712.796[0m>36.971	 lr: [36m0.00017385[0m
+[2m[trainer.py][0m [[36m340[0m/10000]	 [36m1.567[0mit/s	 time: [36m0:03:37[0m~1:42:45	 loss: [36m552.336[0m>36.971	 lr: [36m0.0001788[0m
+[2m[trainer.py][0m [[36m350[0m/10000]	 [36m1.57[0mit/s	 time: [36m0:03:43[0m~1:42:28	 loss: [36m117.685[0m>36.971	 lr: [36m0.00018374[0m

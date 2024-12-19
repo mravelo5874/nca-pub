@@ -1,0 +1,330 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  min-width: 100%;
+  background-color: rgb(255, 255, 255);
+  overflow: hidden;
+  font-family: "Monaco", monospace;
+}
+
+canvas {
+  display: block;  /* prevents scrollbar */
+  width: 100vw;
+  height: 100vh;
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0em;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+  padding: 0em;
+}
+
+/*
+LEFT SIDEBAR
+*/
+
+#sidebar-left {
+  width: 32em;
+  height: 100%;
+  transition: 0.5s ease-in-out;
+
+  /* position */
+  position: absolute;
+  top:0px;
+  bottom:0px;
+  left:0px;
+  direction: rtl;
+}
+
+#sidebar-left.closed {
+  left: -24em;
+}
+
+#sidebar-left-panel {
+  transition: 0.5s ease-in-out;
+
+  width: 22em;
+  height: 100%;
+  overflow-y: auto;
+
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+
+  /* position */
+  position: absolute;
+  top:0px;
+  bottom:0px;
+  left:0px;
+  direction: rtl;
+
+  background-color:rgba(255, 255, 255, 0.6);
+  box-shadow: black 0.5em 0.0em 0.5em;
+}
+
+#sidebar-left-inside {
+  direction: ltr;
+}
+
+#sidebar-left-panel.closed {
+  box-shadow: black 0.0em 0.0em 0.0em;
+  background-color:black;
+}
+
+#sidebar-left-button {
+  transition: 0.5s ease-in-out;
+
+  /* position */
+  position: absolute;
+  top:0px;
+  left:24em;
+
+  background-color:white;
+  color:black;
+  box-shadow: black 0.1em 0.1em 0.2em 0.1em;
+}
+
+#sidebar-left-button:hover {
+  background-color:rgba(0, 119, 255, 0.85);
+}
+
+#sidebar-left-button.closed {
+  background-color: black;
+  color:white;
+  border: solid 0.1em white;
+  box-shadow: white 0.1em 0.1em 0.1em;
+}
+
+#sidebar-left-button.closed:hover {
+  background-color:rgba(0, 119, 255, 0.85);
+}
+
+/*
+RIGHT SIDEBAR
+*/
+
+#sidebar-right {
+  width: 32em;
+  transition: 0.5s ease-in-out;
+
+  /* position */
+  position: absolute;
+  top:0px;
+  bottom:0px;
+  right:0px;
+}
+
+#sidebar-right.closed {
+  right: -24em;
+}
+
+#sidebar-right-panel {
+  transition: 0.5s ease-in-out;
+
+  width: 22em;
+  height: 100%;
+  overflow-y: auto;
+
+  padding-top: 1em;
+  padding-bottom: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+
+  /* position */
+  position: absolute;
+  top:0px;
+  bottom:0px;
+  right:0px;
+  direction: ltr;
+
+  background-color:rgba(255, 255, 255, 0.6);
+  box-shadow: black 0.5em 0.0em 0.5em;
+}
+
+#sidebar-right-panel.closed {
+  box-shadow: black 0.0em 0.0em 0.0em;
+  background-color:black;
+}
+
+#sidebar-right-button {
+  transition: 0.5s ease-in-out;
+
+  /* position */
+  position: absolute;
+  top:0px;
+  right:24em;
+
+  background-color:white;
+  color:black;
+  box-shadow: black 0.1em 0.1em 0.1em;
+}
+
+#sidebar-right-button:hover {
+  background-color:rgba(0, 119, 255, 0.85);
+}
+
+#sidebar-right-button.closed {
+  background-color: black;
+  color:white;
+  border: solid 0.1em white;
+  box-shadow: white 0.1em 0.1em 0.1em;
+}
+
+#sidebar-right-button.closed:hover {
+  background-color:rgba(0, 119, 255, 0.85);
+}
+
+/*
+GUI BUILDING BLOCKS
+*/
+
+#ui-title {
+  font-size: 1.2em;
+  color: rgb(0, 0, 0);
+  padding: 0em;
+  margin-top: 0em;
+  margin-bottom: 0.5em;
+}
+
+#ui-sub-title {
+  font-size: 1.0em;
+  color: rgb(0, 0, 0);
+  padding: 0em;
+  margin-top: 0em;
+  margin-bottom: 0.5em;
+}
+
+#ui-text {
+  font-size: 0.8em;
+  color: rgb(73, 73, 73);
+  margin-top: 0em;
+  margin-bottom: 0.5em;
+}
+
+#ui-text big {
+  font-size: 1.4em;
+}
+
+i {
+  color: rgb(62, 92, 97);
+}
+
+.ui-row {
+  /* flex */
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+}
+
+.ui_button {
+  /* text */
+  color: rgb(0, 0, 0);
+  font-family: monospace;
+  font-size: 16px;
+  text-align: center;
+  /* padding */
+  padding-top: 0.5em;
+  padding-left: 0.7em;
+  padding-right: 0.7em;
+  padding-bottom: 0.5em;
+  /* border */
+  border: none;
+  /* border: solid 0.1em rgba(0, 0, 0, 0.3); */
+  box-shadow: white 0.1em 0.1em 0.1em;
+}
+
+.exit_button {
+  color: rgb(0, 0, 0);
+  background-color: rgba(255, 193, 99, 0.85);
+  box-shadow: rgb(0, 0, 0) 0.1em 0.1em 0.1em;
+}
+
+.exit_button:hover {
+  color: rgb(255, 255, 255);
+  background-color: rgb(255, 0, 0);
+}
+
+.a_button {
+  position: relative;
+  /* text */
+  color: rgba(255, 255, 255, 0.8);
+  font-family: monospace;
+  font-size: 16px;
+  text-align: center;
+  /* padding */
+  padding-top: 0.5em;
+  padding-left: 0.7em;
+  padding-right: 0.7em;
+  padding-bottom: 0.5em;
+  /* border */
+  border: none;
+  text-decoration-line: none;
+  background-color: rgb(22, 4, 39);
+  box-shadow: black 0.1em 0.1em 0.1em;
+}
+
+.a_button:hover {
+  color: rgba(0, 0, 0, 0.8);
+  background-color: rgb(255, 196, 87);
+  box-shadow: black 0.2em 0.2em 0.2em;
+}
+
+.ui_button:active {
+  -webkit-transition: .2s;
+  transition: .2s;
+  background-color: rgba(255, 169, 46, 0.85);
+  box-shadow: black -0.05em -0.05em 0.1em;
+  color: white;
+}
+
+.dropdown_input {
+  width: 100%;
+  font-family: monospace;
+  font-size: 16px;
+  padding: 0.5em;
+  border: none;
+  /* border */
+  border: solid 0.1em rgba(0, 0, 0, 0.3);
+}
+
+.dropdown_option {
+  padding: 0.5em;
+}
+
+/*
+// #################
+// CUSTOM SCROLL BAR
+// #################
+*/
+
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #ffffff;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 119, 255, 0.85);
+}
+
+::-webkit-scrollbar-thumb:active {
+  -webkit-transition: .4s;
+  transition: .4s;
+
+  background: rgba(255, 193, 99, 0.85);
+}

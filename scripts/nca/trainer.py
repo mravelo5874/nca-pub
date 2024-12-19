@@ -36,14 +36,16 @@ class thesis_nca_trainer(_base_nca_trainer_):
         # create optimizer and lr scheduler
         optimizer = torch.optim.Adam(
             self.model.parameters(),
-            lr=self.args.start_lr, 
+            lr=self.args.max_lr, 
             weight_decay=0.5
         )
-        lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer=optimizer,
-            factor=self.args.factor_sched,
-            patience=self.args.patience_sched,
-            min_lr=self.args.end_lr,
+        lr_sched = torch.optim.lr_scheduler.CyclicLR(
+            optimizer, 
+            self.args.base_lr, 
+            self.args.max_lr, 
+            self.args.lr_step_size, 
+            mode='triangular2', 
+            cycle_momentum=False
         )
 
         # create seed and target tensors
@@ -69,6 +71,7 @@ class thesis_nca_trainer(_base_nca_trainer_):
         augment_shape = [1, add_channels, target_size, target_size, target_size]
         seed_ten = torch.cat([seed_ten, torch.zeros(augment_shape)], dim=1)
         target_ten = torch.cat([target_ten, torch.zeros(augment_shape)], dim=1)
+        self.input_tensor_size = target_ten.shape
 
         # set seed hidden channels to 1 if cell is alive (alpha == 1)
         for x in range(target_size):
@@ -84,7 +87,7 @@ class thesis_nca_trainer(_base_nca_trainer_):
         
         utils.log(f'{PROGRAM} seed.shape: {Fore.WHITE}{list(seed_ten.shape)}{Style.RESET_ALL}')
         utils.log(f'{PROGRAM} target.shape: {Fore.WHITE}{list(target_ten.shape)}{Style.RESET_ALL}')
-        utils.log(f'{PROGRAM} pool.shape:{Fore.WHITE}{list(pool.shape)}{Style.RESET_ALL}')
+        utils.log(f'{PROGRAM} pool.shape: {Fore.WHITE}{list(pool.shape)}{Style.RESET_ALL}')
         utils.log(f'{PROGRAM} starting training w/ {Fore.GREEN}{self.args.epochs}{Style.RESET_ALL} epochs...')
 
         loss_log = []
@@ -93,17 +96,17 @@ class thesis_nca_trainer(_base_nca_trainer_):
         train_start = datetime.datetime.now()
         for epoch in range(self.args.epochs+1):
             with torch.no_grad():
-                # * sample batch from pool
+                # sample batch from pool
                 batch_idxs = np.random.choice(self.args.pool_size, self.args.batch_size, replace=False)
                 x = pool[batch_idxs]
                 
-                # * re-order batch based on loss
+                # re-order batch based on loss
                 loss_ranks = torch.argsort(self.voxel_wise_loss_function(x, target_ten_bs, _dims=[-1, -2, -3, -4]), descending=True)
                 x = x[loss_ranks]
                 
-                # * re-add seed into batch
+                # re-add seed into batch
                 x[:1] = seed_ten.clone()
-                # * randomize last channel
+                # randomize last channel
                 if isotype == 1:
                     x[:1, -1:] = torch.rand(target_size, target_size, target_size)*np.pi*2.0
                 elif isotype == 3:
@@ -111,12 +114,12 @@ class thesis_nca_trainer(_base_nca_trainer_):
                     x[:1, -2:-1] = torch.rand(target_size, target_size, target_size)*np.pi*2.0
                     x[:1, -3:-2] = torch.rand(target_size, target_size, target_size)*np.pi*2.0
             
-                # * damage lowest loss in batch
+                # damage lowest loss in batch
                 if epoch % self.args.damage_rate == 0:
                     mask = torch.tensor(utils.half_volume_mask(target_size, 'rand'))
-                    # * apply mask
+                    # apply mask
                     x[-self.args.damage_num:] *= mask
-                    # * randomize angles for steerable models
+                    # randomize angles for steerable models
                     if isotype == 1:
                         inv_mask = ~mask
                         x[-self.args.damage_num:, -1:] += torch.rand(target_size, target_size, target_size)*np.pi*2.0*inv_mask
@@ -126,12 +129,12 @@ class thesis_nca_trainer(_base_nca_trainer_):
                         x[-self.args.damage_num:, -2:-1] += torch.rand(target_size, target_size, target_size)*np.pi*2.0*inv_mask
                         x[-self.args.damage_num:, -3:-2] += torch.rand(target_size, target_size, target_size)*np.pi*2.0*inv_mask
 
-            # * different loss values
+            # different loss values
             overflow_loss = 0.0
             diff_loss = 0.0
             target_loss = 0.0
             
-            # * forward pass
+            # forward pass
             x = x.to('cuda')
             num_steps = np.random.randint(64, 96)
             for _ in range(num_steps):
@@ -145,35 +148,28 @@ class thesis_nca_trainer(_base_nca_trainer_):
                 else:
                     overflow_loss += (x - x.clamp(-2.0, 2.0))[:, :self.args.channels].square().sum()
             
-            # * calculate losses
+            # calculate losses
             x = x.to('cpu')
             target_loss += self.voxel_wise_loss_function(x, target_ten_bs)
             target_loss /= 2.0
             diff_loss *= 10.0
             loss = target_loss + overflow_loss + diff_loss
     
-            # backwards pass
+            # backward pass
             with torch.no_grad():
                 loss.backward()
+                # * normalize gradients 
+                for p in self.model.parameters():
+                    p.grad /= (p.grad.norm()+1e-5)
+
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), 5) # maybe? : 
                 optimizer.step()
                 optimizer.zero_grad()
-                lr_scheduler.step(loss)
-                _loss = loss.item()
+                lr_sched.step()
 
-            # with torch.no_grad():
-            #     loss.backward()
-            #     # * normalize gradients 
-            #     for p in self.model.parameters():
-            #         p.grad /= (p.grad.norm()+1e-5)
-
-            #     torch.nn.utils.clip_grad_norm_(self.model.parameters(), 5) # maybe? : 
-                optimizer.step()
-                optimizer.zero_grad()
-                # self.sched.step()
-
-            # * re-add batch to pool
+            # re-add batch to pool
             pool[batch_idxs] = x.clone()
-            # * correctly add to loss log
+            # correctly add to loss log
             _loss = loss.item()
             if torch.isnan(loss) or torch.isinf(loss) or torch.isneginf(loss):
                 pass
@@ -181,33 +177,50 @@ class thesis_nca_trainer(_base_nca_trainer_):
                 loss_log.append(_loss)
             avg_loss = sum(loss_log[-self.args.info_rate:])/float(self.args.info_rate)
                                 
-            # * detect invalid loss values :(
+            # detect invalid loss values :(
             if torch.isnan(loss) or torch.isinf(loss) or torch.isneginf(loss):
                 utils.log(f'{PROGRAM} {Fore.RED}error!{Style.RESET_ALL} detected invalid loss value: {loss}')
                 utils.log(f'{PROGRAM} overflow loss: {overflow_loss}, diff loss: {diff_loss}, target loss: {target_loss}')
                 raise ValueError
             
-            # * print info
+            # print info
             if epoch % self.args.info_rate == 0 and epoch!= 0:
                 secs = (datetime.datetime.now()-train_start).seconds
                 time = str(datetime.timedelta(seconds=secs))
                 iter_per_sec = float(epoch)/float(secs)
                 est_time_sec = int((self.args.epochs-epoch)*(1/iter_per_sec))
                 est = str(datetime.timedelta(seconds=est_time_sec))
-                lr = np.round(lr_scheduler.get_last_lr()[0], 8)
-                utils.log(f'{PROGRAM} [{Fore.CYAN}{epoch}{Style.RESET_ALL}/{self.args.epochs}]\t {Fore.CYAN}{np.round(iter_per_sec, 3)}{Style.RESET_ALL}it/s\t time: {Fore.CYAN}{time}{Style.RESET_ALL}~{est}\t loss: {Fore.CYAN}{np.round(avg_loss, 3)}{Style.RESET_ALL}>{np.round(np.min(loss_log), 3)}\t lr: {lr}')
+                lr = np.round(lr_sched.get_last_lr()[0], 8)
+                utils.log(f'{PROGRAM} [{Fore.CYAN}{epoch}{Style.RESET_ALL}/{self.args.epochs}]\t {Fore.CYAN}{np.round(iter_per_sec, 3)}{Style.RESET_ALL}it/s\t time: {Fore.CYAN}{time}{Style.RESET_ALL}~{est}\t loss: {Fore.CYAN}{np.round(avg_loss, 3)}{Style.RESET_ALL}>{np.round(np.min(loss_log), 3)}\t lr: {Fore.CYAN}{lr}{Style.RESET_ALL}')
             
             # save model if minimun average loss detected
             if avg_loss < min_avg_loss and epoch >= self.args.info_rate:
                 min_avg_loss = avg_loss
                 if best_model_path is not None:
-                    os.remove(best_model_path)
-                best_model_path = f'models/{self.args.model_dir}/best@{epoch}.pt'
+                    os.remove(f'{best_model_path}.pt')
+                    os.remove(f'{best_model_path}.onnx')
+                best_model_path = f'models/{self.args.model_dir}/best@{epoch}'
                 self.model.save(f'best@{epoch}')
+
+                # export onnx model
+                torch.onnx.export(
+                    self.model,                 # model being run
+                    seed_ten,                   # model input (or a tuple for multiple inputs)
+                    f'{best_model_path}.onnx',  # where to save the model (can be a file or file-like object)
+                    export_params=True,         # store the trained parameter weights inside the model file
+                    opset_version=10,           # the ONNX version to export the model to
+                    do_constant_folding=True,   # whether to execute constant folding for optimization
+                    input_names=['input'],      # the model's input names
+                    output_names=['output'],    # the model's output names
+                    dynamic_axes={              # variable length axes
+                        'input' : {0 : 'batch_size'},    
+                        'output' : {0 : 'batch_size'},
+                    }
+                )
+
                 utils.log(f'{PROGRAM} detected minimum average loss during training: {Fore.GREEN}{np.round(min_avg_loss, 3)}{Style.RESET_ALL} -- saving model to: {Fore.WHITE}{best_model_path}{Style.RESET_ALL}')
-                
         
-        # * save loss plot
+        # save loss plot
         pl.plot(loss_log, '.', alpha=0.1)
         pl.yscale('log')
         pl.ylim(np.min(loss_log), loss_log[0])
@@ -218,6 +231,22 @@ class thesis_nca_trainer(_base_nca_trainer_):
         elapsed_time = str(datetime.timedelta(seconds=secs))
         utils.log(f'{PROGRAM} elapsed time: {Fore.WHITE}{elapsed_time}{Style.RESET_ALL}')
 
-        # * save final model
+        # save final pt model
         self.model.save(f'final@{epoch}')
         utils.log(f'{PROGRAM} {Fore.GREEN}training complete{Style.RESET_ALL} -- saving final model to: {Fore.WHITE}{self.args.model_dir}/{self.args.name}/final@{epoch}.pt{Style.RESET_ALL}')
+
+        # save final onnx model
+        torch.onnx.export(
+            self.model,                 # model being run
+            seed_ten,                   # model input (or a tuple for multiple inputs)
+            f'{self.args.model_dir}/{self.args.name}/final@{epoch}.onnx',
+            export_params=True,         # store the trained parameter weights inside the model file
+            opset_version=10,           # the ONNX version to export the model to
+            do_constant_folding=True,   # whether to execute constant folding for optimization
+            input_names=['input'],      # the model's input names
+            output_names=['output'],    # the model's output names
+            dynamic_axes={              # variable length axes
+                'input' : {0 : 'batch_size'},    
+                'output' : {0 : 'batch_size'},
+            }
+        )

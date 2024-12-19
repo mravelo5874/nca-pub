@@ -1,6 +1,6 @@
 {
     "name": "testing",
-    "target": "vox_models\\targets\\minicube5.vox",
+    "target": "vox_models\\targets\\burger.vox",
     "seed": "vox_models\\seeds\\rgb_3x3x3.vox",
     "perception": "thesis_anisotropic_perception",
     "model": "thesis_nca_model",
@@ -11,13 +11,12 @@
     "epochs": 10000,
     "pool_size": 64,
     "batch_size": 4,
-    "start_lr": 0.001,
-    "end_lr": 1e-05,
-    "factor_sched": 0.5,
-    "patience_sched": 500,
+    "base_lr": 1e-05,
+    "max_lr": 0.001,
+    "lr_step_size": 2000,
     "damage_num": 2,
     "damage_rate": 5,
     "log_file": "trainlog.txt",
     "info_rate": 10,
-    "model_dir": "testing-2024-12-17@23-08-59"
+    "model_dir": "testing-2024-12-19@00-01-26"
 }
